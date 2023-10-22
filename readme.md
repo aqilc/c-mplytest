@@ -53,30 +53,25 @@ This was used for the graphic above, with the command `gcc example.c -o example.
 
 char* str;
 
-// Defines an init function that runs before all tests and doesn't get timed.
+// Defines an init function that runs before all tests and doesn't get timed. INIT {} also works fine.
 INIT() {
 	str = malloc(sizeof(char) * 51);
 	str[50] = 0;
 }
 
-// Tests are started with TEST(char name[]) and ended with TEND(). This starts a new function, and it is advised to INDENT YOUR CODE in the test!
+// Tests are started with TEST(char name[]) and ended with TEND(). This starts a new function, and it is advised to INDENT YOUR CODE in the test.
 TEST("Asserts")
-	// assert(bool passed)
 	assert(1 + 1 == 2);
-	// asserteq(any_num_type num1, any_num_type num2)
 	asserteq(1 + 1, 2.0f);
-TEND() // You can also omit the brackets, just used here for aesthetics.
+TEND()
 
 // Subtests help you allocate resources for a test and make mini tests along the way.
 TEST("Subtests")
-	// subtest(char name[], bool passed)
 	subtest("Subtraction", 2 - 1 == 1);
 
-	// substart(char name[])
 	substart("Multiplication");
 		assert(1 * 2 == 2);
 		asserteq(2 * 1, 2);
-	// subend(bool passed)
 	subend(1);
 TEND()
 
