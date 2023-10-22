@@ -1,5 +1,4 @@
 <div align="center">
-	<img src="https://github.com/aqilc/c-mplytest/assets/32044067/c3981ea0-7cff-4333-894d-8385b8098436" width=300>
 	<h1>c-mplytest</h1>
 </div>
 
