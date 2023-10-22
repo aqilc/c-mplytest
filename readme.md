@@ -3,8 +3,6 @@
 
 A framework made to get right into testing in C with the main goals being simplicity, syntax (ease-of-typing over prettiness) and utility. This framework leverages the `__COUNTER__` macro provided by many compilers, and is limited to those compilers. Currently only tested with MSVC, MingW and GCC.
 
-![Image of utility](https://github.com/aqilc/c-mplytest/assets/32044067/f07563bc-a726-451f-9454-1293ab28de1b)
-
 ### ✨ Features ✨
 
 - No need to copy every test function name into "suites" and/or other BS.
@@ -43,6 +41,8 @@ A framework made to get right into testing in C with the main goals being simpli
 
 ### Example
 
+![Image of utility](https://github.com/aqilc/c-mplytest/assets/32044067/04ef2ada-aa9f-4f18-8013-e5b1a2f5487d)
+
 This was used for the graphic above, with the command `gcc example.c -o example.exe && example`.
 
 ```c
@@ -78,10 +78,10 @@ TEST("Subtests")
 	subend(1);
 TEND()
 
-// The test suite is built to catch 
+// This test is built to catch SIGSEGVs
 TEST("Signal Catching")
 	subtest("Proper access", str[10]);
-	subtest("Access Violation", str[60]);
+	subtest("Access Violation", str[60000]);
 TEND()
 
 // Test constructors and destructors, defined in macros. These, unlike INIT(), run every test and you can put whatever into them.
@@ -93,7 +93,7 @@ TEND()
 TEST("Test Initializers")
 	"lol";
 
-	assert(strlen(s), 3);
+	asserteq(strlen(s), 3);
 TEND()
 
 #include "tests_end.h"
