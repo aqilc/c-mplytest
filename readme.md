@@ -2,6 +2,8 @@
 
 A framework made to get right into testing in C with the main goals being simplicity, syntax (ease-of-typing over prettiness) and utility. This framework leverages the `__COUNTER__` macro provided by many compilers, and is limited to those compilers. Currently only tested with MSVC, MingW and GCC.
 
+![Image of utility](https://github.com/aqilc/c-mplytest/assets/32044067/f07563bc-a726-451f-9454-1293ab28de1b)
+
 #### Features
 
 - No need to copy every test function name into "suites" and/or other BS.
@@ -39,6 +41,8 @@ A framework made to get right into testing in C with the main goals being simpli
 	- `TESTCLEAN`: Predefined macro (re-define yourself) that is put at the end of every test. Timed.
 
 #### Example
+
+This was used for the graphic above, with the command `gcc example.c -o example.exe && example`.
 
 ```c
 #include <string.h>
