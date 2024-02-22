@@ -1,22 +1,42 @@
 <div align="center">
 	<h1>c-mplytest</h1>
+	<p>Testing in C, made easy, fast and pretty.</p>
 </div>
 
-A framework made to get right into testing in C with the main goals being simplicity, syntax (ease-of-typing over prettiness) and utility. This framework leverages the `__COUNTER__` macro provided by many compilers, and is limited to those compilers. Currently only tested with MSVC, MingW and GCC.
+
+```c
+#include "tests.h"
+
+TEST("Test Name") {
+	assert(1 == 1);
+	asserteq(1 + 1, 2);
+	assertmemeq(&(int) { 0x2 }, { 0x0, 0x0, 0x0, 0x2 });
+	assertstreq("hi", "hi");
+}
+
+TEST("Subtests") {
+	SUB("1 == 1") {
+		assert(1 == 1);
+	}
+
+	SUB("Should you use this library?") {
+		assert(!!"yes!");
+	}
+}
+
+#include "tests_end.h"
+```
+
 
 ## ✨ Features
 
-- [x] No need to copy every test function name into "suites" and/or other BS.
+- [x] Works in MSVC, MinGW, GCC, and any other compiler that supports `__COUNTER__`.
+- [x] ↳ No need to copy every test function name into "suites" and/or other BS.
 - [x] Clean test output with fully featured timing.
+- [x] **Microbenchmarks** alongside tests!!!
 - [x] Properly and easily allows you to name tests and parts of tests.
 - [x] Simple and clean to use.
-- [x] Catches SIGSEGVs and other signals without stopping the tests.
-- [x] Initializers/cleaners per test and before all tests.
-
-## ⚙ Installation
-
-1. Download `tests.h` and `tests_end.h` into your local machine.
-2. Put their directory in your include paths for your projects and compilation setups.
+- [x] **Catches SIGSEGVs** and other signals without stopping the tests, properly failing the appropriate test and subtest.
 
 ## 🧰 Usage
 
@@ -28,20 +48,16 @@ A framework made to get right into testing in C with the main goals being simpli
 
 ## 📖 API
 
-- `TEST(char name[])`: Defines a test.
-- `TEND()`/`TEND`: Put at the end of test definitions.
+- `TEST("Test name") {}`: Defines a test.
 - `assert(bool passed)`: A check performed per test.
 	- `asserteq(any_num_type n1, any_num_type n2)`: Can use any type of number for arguments, including Enums.
-- `subtest(bool passed)`: Performs a named check inside of a test.
-- `substart(char name[])`: Defines the start of a "subtest". This is a part of the test that is also individually timed
+	- `assertmemeq()`
+- `SUB("Subtest name") {}`: Defines the start of a "subtest". This is a part of the test that is also individually timed
 	- This resets the timer so any previous actions between subtests will not be timed.
-- `subend(bool passed)`: Ends a subtest. The argument takes whether the subtest passed or failed.
 - **Advanced:**
 	- `INIT() { /* code */ }`: Defines an initializer function, run before all tests and untimed.
-	- `TESTINIT`: Predefined macro (re-define yourself) that is put at the very start of every test. Timed.
-	- `TESTCLEAN`: Predefined macro (re-define yourself) that is put at the end of every test. Timed.
 
-## Example
+## Demo
 
 ![Image of utility](https://github.com/aqilc/c-mplytest/assets/32044067/04ef2ada-aa9f-4f18-8013-e5b1a2f5487d)
 
@@ -59,44 +75,32 @@ INIT() {
 	str[50] = 0;
 }
 
-// Tests are started with TEST(char name[]) and ended with TEND(). This starts a new function, and it is advised to INDENT YOUR CODE in the test.
-TEST("Asserts")
+// Tests are started with TEST("Test Name") {}
+TEST("Asserts") {
 	assert(1 + 1 == 2);
 	asserteq(1 + 1, 2.0f);
-TEND()
+}
 
-// Subtests help you allocate resources for a test and make mini tests along the way.
-TEST("Subtests")
-	subtest("Subtraction", 2 - 1 == 1);
-
-	substart("Multiplication");
+// Tests with subtests are different from normal tests with just asserts - Only the contents of the subtest are timed.
+TEST("Subtests") {
+	char* setup = malloc(2000); // This is not timed.
+	
+	SUB("Subtraction") { assert(2 - 1 == 1); }
+	SUB("Multiplication") {
 		assert(1 * 2 == 2);
 		asserteq(2 * 1, 2);
-	subend(1);
-TEND()
+	}
+	free(setup); // Not timed.
+}
 
 // This test is built to catch SIGSEGVs
-TEST("Signal Catching")
-	subtest("Proper access", str[10]);
-	subtest("Access Violation", str[60000]);
-TEND()
-
-// Test constructors and destructors, defined in macros. These, unlike INIT(), run every test and you can put whatever into them.
-#undef TESTINIT
-#define TESTINIT char* s = 
-#undef TESTCLEAN
-#define TESTCLEAN assert(s[3] == 0);
-
-TEST("Test Initializers")
-	"lol";
-
-	asserteq(strlen(s), 3);
-TEND()
+TEST("Signal Catching") {
+	SUB("Proper access") { assert(str[10]); }
+	SUB("Access Violation") { assert(str[60000]); }
+}
 
 #include "tests_end.h"
 ```
 
-More examples of real-world use can be found at https://github.com/aqilc/jsc/tree/main/test/api.
-
 > **Note** 
-> Known issue: Any `assert`s before a subtest count for that subtest. Currently no fix because of the structure of the framework.
+> Any `assert`s before a subtest count for that subtest.
